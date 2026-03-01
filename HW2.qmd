@@ -1,0 +1,140 @@
+---
+title: "HW2"
+format: html
+editor: visual
+---
+
+# Summary Statistics
+
+## 2 quantitative variables, 2 ordinal variables, and 2 categorical variables
+
+```{r}
+# Load required libraries
+library(tidyverse)
+library(ggplot2)
+library(dplyr)
+
+# Read the data
+travel_data <- read.csv("travel_map.csv")
+
+# Create ordered factors for ordinal variables
+travel_data$Self_rated_health <- factor(travel_data$Self_rated_health, 
+                                        levels = c("Poor", "Fair", "Good", "Very good", "Excellent"),
+                                        ordered = TRUE)
+
+travel_data$Household_income <- factor(travel_data$Household_income,
+                                       levels = c("Under $10,000", "$10,000 to $34,999", 
+                                                  "$35,000 to $74,999", "$75,000 to $149,999", 
+                                                  "$150,000 and over"),
+                                       ordered = TRUE)
+
+```
+
+```{r}
+# 2 Quantitative Variables
+summary(travel_data$Yearly_miles_personally_driven)
+
+summary(travel_data$Avg_trip_distance_in_miles)
+
+# 2 Ordinal Variables
+table(travel_data$Self_rated_health)
+
+table(travel_data$Household_income)
+
+# 2 Categorical Variables
+table(travel_data$Sex)
+
+table(travel_data$Race)
+
+```
+
+```{r}
+# Quantitative Variable 1: Yearly Miles Driven
+ggplot(travel_data, aes(x = Yearly_miles_personally_driven)) +
+  geom_histogram(bins = 30, fill = "steelblue", color = "black", alpha = 0.7) +
+  labs(title = "Distribution of Yearly Miles Driven",
+       x = "Yearly Miles", y = "Frequency") +
+  theme_minimal() +
+  scale_x_continuous(labels = scales::comma)
+```
+
+```{r}
+# Quantitative Variable 2: Average Trip Distance
+ggplot(travel_data, aes(x = Avg_trip_distance_in_miles)) +
+  geom_histogram(bins = 30, fill = "coral", color = "black", alpha = 0.7) +
+  labs(title = "Distribution of Average Trip Distance",
+       x = "Average Trip Distance (miles)", y = "Frequency") +
+  theme_minimal() +
+  scale_x_log10(labels = scales::comma)
+```
+
+```{r}
+# Ordinal Variable 1: Self-Rated Health
+ggplot(travel_data, aes(x = Self_rated_health)) +
+  geom_bar(fill = "forestgreen", alpha = 0.7) +
+  labs(title = "Distribution of Self-Rated Health",
+       x = "Self-Rated Health", y = "Count") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+```{r}
+# Ordinal Variable 2: Household Income
+ggplot(travel_data, aes(x = Household_income)) +
+  geom_bar(fill = "goldenrod", alpha = 0.7) +
+  labs(title = "Distribution of Household Income",
+       x = "Household Income", y = "Count") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+```{r}
+# Categorical Variable 1: Sex
+ggplot(travel_data, aes(x = Sex)) +
+  geom_bar(fill = c("lightblue", "pink"), alpha = 0.7) +
+  labs(title = "Distribution of Sex",
+       x = "Sex", y = "Count") +
+  theme_minimal()
+```
+
+```{r}
+# Categorical Variable 2: Race
+ggplot(travel_data, aes(x = Race)) +
+  geom_bar(fill = "purple", alpha = 0.7) +
+  labs(title = "Distribution of Race",
+       x = "Race", y = "Count") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+```
+
+```{r}
+# Relationship 1: Income vs Yearly Miles
+ggplot(travel_data, aes(x = Household_income, y = Yearly_miles_personally_driven)) +
+  geom_boxplot(fill = "skyblue", alpha = 0.7) +
+  labs(title = "Yearly Miles Driven by Income Level",
+       x = "Household Income", y = "Yearly Miles") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  scale_y_continuous(labels = scales::comma)
+
+
+
+# Relationship 2: Health vs Trip Distance
+ggplot(travel_data, aes(x = Self_rated_health, y = Avg_trip_distance_in_miles)) +
+  geom_boxplot(fill = "lightgreen", alpha = 0.7) +
+  labs(title = "Average Trip Distance by Health Status",
+       x = "Self-Rated Health", y = "Average Trip Distance") +
+  theme_minimal() +
+  scale_y_log10(labels = scales::comma)
+
+
+
+# Relationship 3: Age by Sex and Driver Status
+ggplot(travel_data, aes(x = Sex, y = Age, fill = Driver_status)) +
+  geom_boxplot(alpha = 0.7) +
+  labs(title = "Age Distribution by Sex and Driver Status",
+       x = "Sex", y = "Age", fill = "Driver Status") +
+  theme_minimal() +
+  scale_fill_manual(values = c("steelblue", "coral"))
+```
